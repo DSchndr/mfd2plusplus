@@ -1,0 +1,77 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Dennis\\source\\repos\\carhandler\\carhandler\\carhandler.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Dennis\\source\\repos\\carhandler\\carhandler\\carhandler.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Dennis\\source\\repos\\carhandler\\carhandler\\carhandler.csproj",
+        "projectName": "carhandler",
+        "projectPath": "C:\\Users\\Dennis\\source\\repos\\carhandler\\carhandler\\carhandler.csproj",
+        "packagesPath": "C:\\Users\\Dennis\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dennis\\source\\repos\\carhandler\\carhandler\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Dennis\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "SocketCANSharp": {
+              "target": "Package",
+              "version": "[0.10.0, )"
+            },
+            "System.Device.Gpio": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Unosquare.PiGpio": {
+              "target": "Package",
+              "version": "[0.3.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

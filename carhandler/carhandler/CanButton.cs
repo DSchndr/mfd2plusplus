@@ -18,7 +18,7 @@ namespace carhandler
             Reverse = 0x02,
         }
 
-        enum SteeringWheelButton : byte
+        public enum SteeringWheelButton : byte
         {
             None = 0,
             Up = 0x22,
@@ -30,7 +30,7 @@ namespace carhandler
             OK = 0x28,
             Mute = 0x2B
         }
-        enum MFDButton : byte
+        public enum MFDButton : byte
         {
             B1 = 1,
             B2 = 2,
@@ -48,7 +48,7 @@ namespace carhandler
             RotaryClick = 0x0D,
         }
 
-        enum ButtonTiming
+        public enum ButtonTiming
         {
             ShortPress = 0,
             LongPress = 1,
@@ -57,15 +57,24 @@ namespace carhandler
         private CanNetworkInterface if_can;
         private RawCanSocket rawCanSocket;
         private Task CanMessageReceiverTask;
-        public CanButton(string pInterface)
+        private Control control;
+        public CanButton(string pInterface, Control pControl)
         {
+            control = pControl;
             if_can = CanNetworkInterface.GetAllInterfaces(true).First(iface => iface.Name.Equals(pInterface));
             rawCanSocket = new RawCanSocket();
-            CanMessageReceiverTask = Task.Run(() => CanMessageReceiver(rawCanSocket));
+            CanMessageReceiverTask = Task.Run(() => CanMessageReceiver(rawCanSocket, control));
         }
 
-        private void CanMessageReceiver(RawCanSocket prawCanSocket)
+        private ButtonTiming GetButtonPressLength(long pTime)
         {
+            if (pTime > 1000) { return ButtonTiming.LongPress; }
+            return ButtonTiming.ShortPress;
+        }
+
+        private void CanMessageReceiver(RawCanSocket prawCanSocket, Control pControl)
+        {
+            SelectorPosition lastSelectorPos = 0;
             byte lastWheelButton = 0;
             Stopwatch lastWheelButtonStopwatch = new Stopwatch();
             byte lastMFDButton = 0;
@@ -83,13 +92,13 @@ namespace carhandler
                         {
                             continue; //Skip handling buttons
                         }
-                        if (readFrame.Data[1] > lastMFDRotaryPos) //Rotary right
+                        if (readFrame.Data[1] > lastMFDRotaryPos) //Rotary right, dunno if it actually counts up multiple times or sends multiple packets :/ (TODO)
                         {
-
+                            control.RotaryEvent(true);
                         }
-                        if (readFrame.Data[1] < lastMFDRotaryPos) //Rotary left
+                        if (readFrame.Data[1] < lastMFDRotaryPos) //Rotary left as above
                         {
-
+                            control.RotaryEvent(false);
                         }
                         if (readFrame.Data[0] == 0 && lastMFDButton != 0) //Button Stop being pressed
                         {
@@ -99,6 +108,7 @@ namespace carhandler
                             lastMFDButtonStopwatch.Reset();
                             MFDButton b = (MFDButton)lastMFDButton;
                             lastMFDButton = 0;
+                            control.MFDButtonEvent(b);
                         }
                         if (readFrame.Data[0] == lastMFDButton) //Button is keep getting pressed
                         {
@@ -120,10 +130,11 @@ namespace carhandler
                             lastWheelButtonStopwatch.Reset();
                             SteeringWheelButton b = (SteeringWheelButton)lastWheelButton;
                             lastWheelButton = 0;
+                            control.WheelButtonEvent(b);
                         }
                         if (readFrame.Data[0] == lastWheelButton) //Button is keep getting pressed
                         {
-
+                            //Maybe check how long its pressed and then send multiple events? example: going through tracks by holding the button
                         }
                         if ((readFrame.Data[0] != lastWheelButton) && (lastWheelButtonStopwatch.ElapsedMilliseconds == 0)) //Button was pressed
                         {
@@ -133,7 +144,19 @@ namespace carhandler
                     }
                     if (readFrame.CanId == 0x351)
                     {
-                        SelectorPosition s = (SelectorPosition)readFrame.Data[0];
+                        SelectorPosition s = (SelectorPosition)readFrame.Data[0]; //Possible bug!
+                        if (lastSelectorPos != s)
+                        {
+                            if (s == SelectorPosition.Reverse)
+                            {
+                                control.RearViewCamTrigger(true);
+                            }
+                            else
+                            {
+                                control.RearViewCamTrigger(false);
+                            }
+                            lastSelectorPos = s;
+                        }
                     }
                 }
             }

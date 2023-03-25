@@ -1,2 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using carhandler;
+
+Control c = new Control();
 Console.WriteLine("Hello, World!");

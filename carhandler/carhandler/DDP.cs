@@ -20,6 +20,11 @@ namespace carhandler
             DDPLogin("Test Menu", true, 0x55, 0x12);
         }
 
+        private void Suicide() //kill ddp channel, kill vwtp2.0 channel
+        {
+
+        }
+
         private void SimulateTelematics()
         {
             vwtp.CreateCyclicMessage(0x5A7,new byte[] { 0x80,0x80, 0x00, 0x40, 0x00, 0x09, 0x00, 0x00 } , 300);

@@ -1,4 +1,5 @@
 ﻿//VAG Transport Protokoll 2.0
+//todo: "PingPong" task which gets stopped when we wait for ack, sends pong and handles receiving from the cluster
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,12 +36,12 @@ namespace carhandler
             ACKnotreadynextpacket = 0x90    //ACK, not ready for next packet 
         }
 
-        public VWTP20(string pInterface)
+        public VWTP20(string pInterface) //For normal diag sessions (ex. getting values from ECU)
         {
             if_can = CanNetworkInterface.GetAllInterfaces(true).First(iface => iface.Name.Equals(pInterface));
             rawCanSocket = new RawCanSocket();
         }
-        public VWTP20(string pInterface, uint prx_addr, uint ptx_addr )
+        public VWTP20(string pInterface, uint prx_addr, uint ptx_addr ) //For custom sessions to cluster
         {
             if_can = CanNetworkInterface.GetAllInterfaces(true).First(iface => iface.Name.Equals(pInterface));
             rx_addr = prx_addr;
@@ -52,7 +53,7 @@ namespace carhandler
 
         public int CreateCyclicMessage(uint pcanid, byte[] pData, int pInterval) //interval: in ms
         {
-            if(if_can == null || pData.Length >= 8) { //fix null
+            if(if_can == null || pData.Length >= 8) { //todo fix null
                 return -1; //todo exception
             }
             using (var bcmCanSocket = new BcmCanSocket())
@@ -181,7 +182,7 @@ namespace carhandler
             return rx_seq++;
         }
 
-        void DebugPrint(string pText)
+        void DebugPrint(string pText) //todo logger
         {
             Console.WriteLine($"[VWTP]: {pText}");
         }

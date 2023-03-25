@@ -1,4 +1,5 @@
 ﻿//ambient lighting stuff
+//todo: effects handled in task
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,13 @@ namespace carhandler
 {
     internal class LED
     {
+        enum LedEffect
+        {
+            Static = 0,
+            Rainbow = 1,
+            PingPong = 2,
+
+        }
         //todo: add led types
         UserGpio gr, gg, gb;
         public LED(SystemGpio pR, SystemGpio pG, SystemGpio pB) {
